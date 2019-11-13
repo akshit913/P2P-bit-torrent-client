@@ -1,5 +1,6 @@
 package owner;
 
+import log.FileLogger;
 import java.io.*;
 import java.net.Socket;
 
@@ -7,12 +8,12 @@ public class FileOwner extends Thread {
 	final DataInputStream dis; 
     final DataOutputStream dos; 
     final Socket s; 
-    String message;    //message received from the client
-	String MESSAGE;    //uppercase message send to the client
-	ObjectOutputStream out;  //stream write to the socket
+    String message;  
+	ObjectOutputStream out;  
 	ObjectInputStream in; 
-	File directory;   //stream read from the socket
-	// Constructor 
+	File directory;   
+	FileLogger fileLog = new FileLogger();
+	
     public FileOwner(Socket s, DataInputStream dis, DataOutputStream dos)  
     { 
         this.s = s; 
@@ -28,6 +29,11 @@ public class FileOwner extends Thread {
 			in = new ObjectInputStream(s.getInputStream());
 			message = (String)in.readObject();
 			System.out.println(message);
+			//fileLog.makeLogOwner(message);
+			message = (String)in.readObject();
+			System.out.println(message);
+			fileLog.makeLogOwner(message);
+
 		} catch (ClassNotFoundException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
