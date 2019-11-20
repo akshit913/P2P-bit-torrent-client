@@ -19,7 +19,8 @@ public class FileServer {
 				DataInputStream dis = new DataInputStream(s.getInputStream());
 				DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 				System.out.println("Assigning new thread for this client");
-				Thread t = new FileOwner(s, dis, dos);     
+				FileOwner FO = new FileOwner(s, dis, dos);     
+				Thread t = new Thread(FO);
 				t.start();
 
 			} catch (Exception e) {

@@ -12,7 +12,7 @@ import java.util.List;
 
 
 class FileSplit {
-    public static void splitFile(File f,File directory) throws IOException {
+    public  void splitFile(File f,File directory) throws IOException {
         int partCounter = 1; //For naming chunks in order
 
         int sizeOfFiles = 100000; // 100KB
@@ -25,7 +25,7 @@ class FileSplit {
 
             int bytesAmount = 0;
             while ((bytesAmount = bis.read(fileBuffer)) > 0) {
-                String filePartName = String.format("%s.%03d", fileName, partCounter++);
+                String filePartName = String.format("%s.%01d", fileName, partCounter++);
                 File newFile = new File(directory, filePartName);
                 try (FileOutputStream out = new FileOutputStream(newFile)) {
                     out.write(fileBuffer, 0, bytesAmount);
@@ -43,13 +43,13 @@ class FileSplit {
         }
     }
 
-    @SuppressWarnings("unused")
-	public static void main(String[] args) throws IOException {
+
+	/*public static void main(String[] args) throws IOException {
     	 String path = Paths.get("").toAbsolutePath().toString();
          File directory = new File(path+"\\src\\owner");
          String filePath = path+"\\src\\owner\\files";
          File fileDirectory = new File(filePath);
          boolean createFolder = fileDirectory.mkdir();
     	 splitFile(new File(directory + "\\song.mp3"),fileDirectory);
-    }
+    }*/
 }
