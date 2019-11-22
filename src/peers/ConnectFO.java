@@ -50,7 +50,7 @@ public class ConnectFO extends Thread{
 	    int i = 0;
 	    synchronized(ConnectFO.class) {
 	    while(count != i) {
-	    	sendMessage(expectFile());
+	    	//sendMessage(expectFile());
 	    	message = (String)in.readObject();             //file name to be received
 	    	receiveFile((String) directory0,message);
 	    	i++;
@@ -86,15 +86,17 @@ public class ConnectFO extends Thread{
 		try{
 			out.writeObject(msg);
 			out.flush();
-			//System.out.println("Send message: " + msg);
 		}
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
 	}
 	
-	String expectFile() {
-		
+	String expectFile(int[]peerFiles,String PEER_ID) {
+		int sum = 0;
+		for (int i = 0; i < Integer.parseInt(PEER_ID); i++) {
+			sum += peerFiles[i];
+		}
 		return PEER_ID;
 		
 	}

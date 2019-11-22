@@ -18,8 +18,9 @@ public class FileOwner extends Thread {
 	FileSplit fileSplit = new FileSplit();
 	String root = "C:\\Users\\Vivek\\Desktop\\P2P-bit-torrent-client\\src\\owner\\files\\";
 	final int PEER_NO = 5;
-	AtomicInteger chunkNum = new AtomicInteger(1);
-
+	//AtomicInteger chunkNum = new AtomicInteger(1);
+	 volatile static int chunkNum = 1;
+	
 	public FileOwner(Socket s, DataInputStream dis, DataOutputStream dos) {
 		this.s = s;
 		this.dis = dis;
@@ -79,7 +80,7 @@ public class FileOwner extends Thread {
 		}
 		sendMessage(String.valueOf(listOfFiles.length)); // sending message that there are 9 chunks total
 
-		while (getChunkNum() != peerFiles.length) {
+		while (chunkNum != peerFiles.length) {
 
 			message = (String) in.readObject();
 			System.out.println("peer number:" + message); // peer send message that this is my number
@@ -88,10 +89,9 @@ public class FileOwner extends Thread {
 			System.out.println("files to send: " + peerFiles[peer_no]);
 			while (peerFiles[peer_no] > 0) {
 				synchronized (FileOwner.class) {
-					System.out.println("chunk num is: " + chunkNum.get());
-					Thread.sleep(1000);
+					System.out.println("chunk num is: " + chunkNum);
 					sendFile("song.mp3." + String.valueOf(chunkNum));
-					chunkNum.getAndAdd(1);
+					chunkNum++;//.getAndAdd(1);
 					peerFiles[peer_no]--;
 				}
 			}
@@ -99,9 +99,9 @@ public class FileOwner extends Thread {
 
 	}
 
-	public int getChunkNum() {
-		return this.chunkNum.get();
-	}
+	/*public int getChunkNum() {
+		return this.chunkNum();
+	}*/
 
 	void sendMessage(String msg) {
 		try {
