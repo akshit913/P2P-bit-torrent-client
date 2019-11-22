@@ -80,11 +80,12 @@ public class FileOwner extends Thread {
 		}
 		sendMessage(String.valueOf(listOfFiles.length)); // sending message that there are 9 chunks total
 
-		while (chunkNum != peerFiles.length) {
+		while (chunkNum != listOfFiles.length -1) {
 
 			message = (String) in.readObject();
 			System.out.println("peer number:" + message); // peer send message that this is my number
 			int peer_no = Integer.parseInt(message);
+			peer_no = peer_no - 1;
 			sendMessage(String.valueOf(peerFiles[peer_no])); // server sends that expect these many files
 			System.out.println("files to send: " + peerFiles[peer_no]);
 			while (peerFiles[peer_no] > 0) {
