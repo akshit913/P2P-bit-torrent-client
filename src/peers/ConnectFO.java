@@ -16,11 +16,13 @@ public class ConnectFO extends Thread{
 	private String message;
 	ObjectInputStream in;
 	private String directory0;
+	String PEER_ID;
 	ObjectOutputStream out;  
 	
 	
-	public ConnectFO(String directory) {
+	public ConnectFO(String directory,String PEER_ID) {
     	directory0 = directory;
+    	this.PEER_ID = PEER_ID;
     }
 	
 	public void run() {
@@ -33,15 +35,26 @@ public class ConnectFO extends Thread{
 	    DataInputStream dis = new DataInputStream(s.getInputStream()); 
 	    DataOutputStream dos = new DataOutputStream(s.getOutputStream());
 	    System.out.println("Peer connect to file owner");
-	    sendMessage("1");
 	    message = (String)in.readObject();
+	    int totalChunks = Integer.parseInt(message);
+	    System.out.println("Total chunks:" + totalChunks);
+	    sendMessage(PEER_ID);
+	    message = (String)in.readObject();
+	    int totChunks = Integer.parseInt(message);
 	    System.out.println("Files to be received:" + message);
+	    int [] peerFiles = new int[totChunks];
+	    for(int i = 0; i < totChunks ; i++) {
+   	 		peerFiles[i%5]++;
+   	 	}
 	    int count = Integer.parseInt(message);
 	    int i = 0;
+	    synchronized(ConnectFO.class) {
 	    while(count != i) {
-	    	message = (String)in.readObject();
+	    	sendMessage(expectFile());
+	    	message = (String)in.readObject();             //file name to be received
 	    	receiveFile((String) directory0,message);
 	    	i++;
+	    }
 	    }
 		}catch (Exception e) {
 			
@@ -78,5 +91,11 @@ public class ConnectFO extends Thread{
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
+	}
+	
+	String expectFile() {
+		
+		return PEER_ID;
+		
 	}
 }

@@ -1,28 +1,26 @@
 package peers;
 
-import java.io.BufferedInputStream;
-import java.io.DataInputStream;
-import java.io.DataOutputStream;
+import java.io.File;
 import java.io.IOException;
-import java.net.InetAddress;
-import java.net.ServerSocket;
-import java.net.Socket;
-import java.net.UnknownHostException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
+import java.nio.file.Paths;
 
 public class PeerTwo {
+	final String PEER_ID="2";
+	String root;
 	public static void main(String[] args) throws IOException, InterruptedException {
 		PeerTwo p2 = new PeerTwo();
-		p2.connectNeighbours();
+		String path = Paths.get("").toAbsolutePath().toString();
+		String root =  path+"\\src\\peers\\Peer2File";
+		System.out.println("Root dir: " + root);
+		File directory = new File(path+"\\src\\peers\\Peer2File"); 
+		boolean su = directory.mkdir();
+		p2.connectNeighbours(root);
 	}
 	
-	public void connectNeighbours() throws InterruptedException {
-		Thread fo = new Thread(new ConnectFO());
+	public void connectNeighbours(String root) throws InterruptedException {
+		Thread fo = new Thread(new ConnectFO(root,PEER_ID));
 		fo.start();
+		fo.join();
 		ConnectDN pdn2 = new ConnectDN("127.0.0.1",9000);
 		Thread dn = new Thread(pdn2);
 		dn.start();

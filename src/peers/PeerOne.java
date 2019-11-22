@@ -20,6 +20,7 @@ import java.util.concurrent.Executors;
 public class PeerOne {
 	
 	 String root;
+	 final String PEER_ID = "1";
 	 
 	public static void main(String[] args) throws IOException, InterruptedException {
 		
@@ -32,14 +33,12 @@ public class PeerOne {
 		P1.connectNeighbours(root);
 	}
 
-	
-	
 	public static void makeDir() {
 		
 	}
 
 	public void connectNeighbours(String root) {
-		Thread fo = new Thread(new ConnectFO(root));
+		Thread fo = new Thread(new ConnectFO(root,PEER_ID));
 		fo.start();
 		ConnectUN p1UN = new ConnectUN(9000);
 		Thread un = new Thread(p1UN);
