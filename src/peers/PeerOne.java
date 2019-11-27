@@ -26,7 +26,7 @@ public class PeerOne {
 		
 		PeerOne P1 = new PeerOne();
 		String path = Paths.get("").toAbsolutePath().toString();
-		String root =  path+"\\src\\peers\\Peer1File";
+		String root =  path+"\\src\\peers\\Peer1File\\";
 		System.out.println("Root dir: " + root);
 		File directory = new File(path+"\\src\\peers\\Peer1File"); 
 		boolean su = directory.mkdir();
@@ -38,13 +38,22 @@ public class PeerOne {
 	}
 
 	public void connectNeighbours(String root) {
-		Thread fo = new Thread(new ConnectFO(root,PEER_ID));
+		ConnectFO fileO = new ConnectFO(root,PEER_ID);
+		Thread fo = new Thread(fileO);
 		fo.start();
-		ConnectUN p1UN = new ConnectUN(9000);
+		try {
+			Thread.sleep(1000);
+		} catch (InterruptedException e) {
+		// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		int totalChunks = fileO.getTotalChunks();
+		System.out.println("Finally i got totchunks as: " + totalChunks );
+		ConnectUN p1UN = new ConnectUN(9000,totalChunks,root,PEER_ID);
 		Thread un = new Thread(p1UN);
 		un.start();
 		if(p1UN.startPeer) {
-			Thread dn = new Thread(new ConnectDN("127.0.0.1",9004));
+			Thread dn = new Thread(new ConnectDN("127.0.0.1",9004,totalChunks,root,PEER_ID));
 			dn.start();
 		}
 		while(true) {

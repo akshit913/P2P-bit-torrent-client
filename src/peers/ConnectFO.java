@@ -17,7 +17,10 @@ public class ConnectFO extends Thread{
 	ObjectInputStream in;
 	private String directory0;
 	String PEER_ID;
-	ObjectOutputStream out;  
+	ObjectOutputStream out;
+	int totChunks;
+	int totalChunks;
+	int someVal = 100;
 	
 	
 	public ConnectFO(String directory,String PEER_ID) {
@@ -34,18 +37,23 @@ public class ConnectFO extends Thread{
 		out.flush();
 	    DataInputStream dis = new DataInputStream(s.getInputStream()); 
 	    DataOutputStream dos = new DataOutputStream(s.getOutputStream());
+	    
 	    System.out.println("Peer connect to file owner");
 	    message = (String)in.readObject();
 	    int totalChunks = Integer.parseInt(message);
+	    setTotalChunks(totalChunks);
 	    System.out.println("Total chunks:" + totalChunks);
+	    
 	    sendMessage(PEER_ID);
 	    message = (String)in.readObject();
-	    int totChunks = Integer.parseInt(message);
-	    System.out.println("Files to be received:" + message);
+	    totChunks = Integer.parseInt(message);
+	    
+	    System.out.println("Files to be received:" + totChunks);
 	    int [] peerFiles = new int[totChunks];
 	    for(int i = 0; i < totChunks ; i++) {
    	 		peerFiles[i%5]++;
    	 	}
+	    
 	    int count = Integer.parseInt(message);
 	    int i = 0;
 	    synchronized(ConnectFO.class) {
@@ -56,6 +64,7 @@ public class ConnectFO extends Thread{
 	    	i++;
 	    }
 	    }
+	    
 		}catch (Exception e) {
 			
 		}
@@ -63,12 +72,20 @@ public class ConnectFO extends Thread{
 		
 	}
 	
+	private void setTotalChunks(int totalChunks) {
+		// TODO Auto-generated method stub
+		this.totalChunks = totalChunks;
+		
+	}
+
 	public void receiveFile(String directory,String fileName) throws IOException {
 		FileOutputStream output = new FileOutputStream(directory+"\\"+ fileName);
+		output.flush();
 		System.out.println("Receiving "+ fileName);
 		InputStream is = s.getInputStream();
 		DataInputStream clientData = new DataInputStream(is);
         long size = clientData.readLong();
+        System.out.println("This guy is sober i guess" + size);
         long real_size= size;
         byte[] buffer = new byte[1024];
         int bytesRead = 0;
@@ -76,6 +93,7 @@ public class ConnectFO extends Thread{
         while (size > 0 && (bytesRead = clientData.read(buffer, 0, (int) Math.min(buffer.length, size))) != -1) {
             output.write(buffer, 0, bytesRead);
             size -= bytesRead;
+            System.out.println(size + fileName);
         }
         System.out.println("File " + fileName +" downloaded of size " +real_size);
         output.close();
@@ -90,6 +108,10 @@ public class ConnectFO extends Thread{
 		catch(IOException ioException){
 			ioException.printStackTrace();
 		}
+	}
+	
+	public int getTotalChunks() {
+		return totalChunks;
 	}
 	
 	String expectFile(int[]peerFiles,String PEER_ID) {

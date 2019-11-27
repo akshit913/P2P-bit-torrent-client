@@ -15,7 +15,7 @@ class FileSplit {
     public  void splitFile(File f,File directory) throws IOException {
         int partCounter = 1; //For naming chunks in order
 
-        int sizeOfFiles = 100000; // 100KB
+        int sizeOfFiles = 1024 * 100; // 100KB
         byte[] fileBuffer = new byte[sizeOfFiles];
 
         String fileName = f.getName();
